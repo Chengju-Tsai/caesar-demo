@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>凱薩密碼示範</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 16px; }
+    textarea { width: 100%; box-sizing: border-box; font-size: 16px; }
+    input[type=number] { width: 70px; font-size: 16px; }
+    button { font-size: 16px; padding: 6px 14px; margin: 4px 4px 4px 0; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 12px; white-space: pre-wrap; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>凱薩密碼示範</h1>
+  <p>輸入英文文字，選擇位移量後加密或解密。</p>
+
+  <textarea id="text" rows="4" placeholder="例如：Hello, World!"></textarea>
+  <p>
+    位移量：<input id="shift" type="number" value="3" min="0" max="25">
+    <button onclick="run(1)">加密</button>
+    <button onclick="run(-1)">解密</button>
+    <button onclick="brute()">暴力破解（試全部 25 種）</button>
+  </p>
+
+  <h3>結果</h3>
+  <pre id="result"></pre>
+
+  <script>
+    function caesar(text, shift) {
+      return [...text].map(function (ch) {
+        if (!/[a-z]/i.test(ch)) return ch;
+        var base = (ch === ch.toUpperCase()) ? 65 : 97;
+        return String.fromCharCode(((ch.charCodeAt(0) - base + shift) % 26 + 26) % 26 + base);
+      }).join('');
+    }
+
+    function run(dir) {
+      var s = parseInt(document.getElementById('shift').value) || 0;
+      var t = document.getElementById('text').value;
+      document.getElementById('result').textContent = caesar(t, s * dir);
+    }
+
+    function brute() {
+      var t = document.getElementById('text').value;
+      var out = '';
+      for (var k = 1; k <= 25; k++) {
+        out += '位移 ' + k + '：' + caesar(t, -k) + '\n';
+      }
+      document.getElementById('result').textContent = out;
+    }
+  </script>
+</body>
+</html>
